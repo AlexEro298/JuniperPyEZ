@@ -16,3 +16,9 @@
 * username = ''
 * password = ''
 * ip_device = ['', '']
+
+4. Use cron:
+* crontab -l - task cron
+* crontab -e - add cron
+* nano /var/spool/cron/root - manual add cron
+* 0 * * * * /samba/scriptsPython/JuniperPyEZ/bash_script - every hour
