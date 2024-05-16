@@ -1,0 +1,5 @@
+#!/bin/bash
+cd /samba/scriptsPython/JuniperPyEZ/;
+. venv/bin/activate;
+python save_config.py;
+deactivate;
