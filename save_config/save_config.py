@@ -4,7 +4,6 @@ from jnpr.junos import Device
 from jnpr.junos.exception import ConnectError
 
 #1 authorization method
-from sys import argv
 #2 authorization method
 import authentification
 
@@ -30,14 +29,24 @@ if __name__ == "__main__":
     # current date and time
     now_date = datetime.datetime.now().strftime("%Y%m%d")
     now_time = datetime.datetime.now().strftime("%H:%M:%S").replace(':', '.')
-    file_log = open(f'/samba/log/save_config/save_config_{now_date}_{now_time}.txt', 'w')
+    path_log = '/samba/log/save_config'
+    #rotation days
+    days = 30
+
+    #rotation log
+    file_rotation(days, f'{path_log}')
+
+    file_log = open(f'{path_log}/save_config_{now_date}_{now_time}.txt', 'w')
 
     for host in hosts:
         #saving path
-        path = f'/samba/hosts/{host}/'
+        path = f'/samba/hosts/{host}'
+        path_set=f'{path}/set'
 
-        #rotation
-        file_rotation(3, path)
+        #rotation config
+        file_rotation(days, f'{path}')
+        file_rotation(days,f'{path_set}')
+
 
         try:
             # connect device
@@ -51,15 +60,18 @@ if __name__ == "__main__":
 
         # current_config
         current_config = dev.cli('show configuration | display omit')
-        file_current_config = open(f'{path}current_config_{now_date}_{now_time}_{host}.txt', 'w')
+        file_current_config = open(f'{path}/current_config_{now_date}_{now_time}_{host}.txt', 'w')
         file_current_config.write(current_config)
         file_current_config.close()
 
         # current_config_set
         current_config_set = dev.cli('show configuration | display set')
-        file_current_config_set = open(f'{path}current_config_set_{now_date}_{now_time}_{host}.txt', 'w')
+        file_current_config_set = open(f'{path_set}/current_config_set_{now_date}_{now_time}_{host}.txt', 'w')
         file_current_config_set.write(current_config_set)
         file_current_config_set.close()
 
         # disconnect device
         dev.close()
+
+    #close log
+    file_log.close()
